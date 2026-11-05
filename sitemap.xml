@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://tools.nofunintended.org/</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://tools.nofunintended.org/products/csv-cleaner/</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://tools.nofunintended.org/guides/</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://tools.nofunintended.org/guides/csv-cleaner.html</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.nofunintended.org/guides/csv-wont-import.html</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.nofunintended.org/guides/remove-blank-rows-from-csv.html</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.nofunintended.org/guides/fix-csv-headers.html</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.nofunintended.org/guides/convert-csv-to-utf8.html</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.nofunintended.org/guides/trim-extra-spaces-from-csv.html</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.nofunintended.org/guides/fix-csv-ragged-rows.html</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.nofunintended.org/guides/fix-numbers-stored-as-text.html</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.nofunintended.org/guides/fix-leading-zeros-excel-csv.html</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.nofunintended.org/guides/fix-garbled-accents-excel-csv.html</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://tools.nofunintended.org/products/stills-to-video/</loc><changefreq>weekly</changefreq></url>
+</urlset>
