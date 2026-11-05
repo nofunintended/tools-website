@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Fix CSV Files with Ragged Rows (Uneven Columns) | No Fun Intended, LLC</title>
+<meta name="description" content="Rows too short or too long break every CSV import. Fix ragged rows by hand in Excel, Google Sheets, or Python — or let CSV Cleaner align them automatically.">
+<style>
+body { font-family:system-ui,-apple-system,"Segoe UI",sans-serif; margin:0; color:#1a1a1a; line-height:1.7; }
+.topnav { padding:14px 24px; background:#f9fafb; border-bottom:1px solid #eee; font-size:14px; }
+.topnav a { color:#4f46e5; text-decoration:none; margin-right:16px; }
+main { max-width:760px; margin:0 auto; padding:36px 20px 60px; }
+h1 { font-size:32px; line-height:1.25; margin:0 0 8px; }
+.meta { color:#6b7280; font-size:14px; margin-bottom:28px; }
+h2 { font-size:22px; margin:32px 0 12px; }
+code { background:#f3f4f6; padding:2px 7px; border-radius:5px; font-size:14px; }
+pre { background:#111827; color:#e5e7eb; padding:16px; border-radius:8px; overflow-x:auto; font-size:14px; }
+ol li, ul li { margin-bottom:8px; }
+.note { background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:14px 18px; margin:20px 0; font-size:15px; }
+.cta { background:#eef2ff; border-radius:12px; padding:24px; margin:36px 0; }
+.cta .btn { display:inline-block; background:#4f46e5; color:#fff; padding:12px 28px; border-radius:8px; text-decoration:none; font-weight:600; margin-top:8px; }
+footer { background:#f9fafb; padding:24px; text-align:center; font-size:14px; color:#6b7280; }
+footer a { color:#4f46e5; }
+</style>
+</head>
+<body>
+<nav class="topnav"><a href="/">Home</a><a href="/guides/">Guides</a><a href="/products/csv-cleaner/">CSV Cleaner</a></nav>
+<main>
+<h1>How to Fix CSV Files with Ragged Rows (Rows with Too Many or Too Few Columns)</h1>
+<p class="meta">A practical guide — Excel, Google Sheets, Python, and the automatic way.</p>
+
+<p>A CSV file has a simple contract: every row has the same number of cells as the header. When that contract breaks — some rows are too short, others too long — it's called <strong>ragged rows</strong>, and import tools react badly. Excel's text wizard may shove data into the wrong columns, databases reject the file outright ("expected 7 columns, found 6"), and in the worst case values silently land under the wrong headers, which you only discover weeks later.</p>
+
+<p>Ragged rows creep in from sloppy exports, hand-editing a CSV in a text editor, joining two files with different columns, and — the classic — extra trailing commas on some rows. Here's how to find and fix them.</p>
+
+<h2>Method 1: Excel</h2>
+<ol>
+<li>Open the CSV in Excel. To find the ragged rows, add a helper column (say column <code>H</code> if your data goes to <code>G</code>) and enter <code>=COUNTA(A2:G2)</code> in the first row of it — this counts the non-empty cells in that row.</li>
+<li>Double-click the fill handle to copy it down the whole column. Now sort or filter: rows whose count doesn't match the header are your ragged ones.</li>
+<li>For <strong>short rows</strong>: insert empty cells where they're missing (right-click the row number → <em>Insert</em>) so every row lines up with the header. If the missing cells are at the end, you can just add commas at the end of the row.</li>
+<li>For <strong>long rows</strong>: look at the extras. If they're stray trailing commas, delete the trailing empty cells. If real data is spilling into extra columns, check whether a value contains a comma that isn't wrapped in quotes — that one comma split one cell into two. Wrap the value in quotes or remove the comma.</li>
+<li>Delete the helper column and save.</li>
+</ol>
+<div class="note"><strong>Watch out:</strong> never fix ragged rows by "fixing" each row a different way. Pick one rule — short rows get padded with empty cells, long rows get their extras checked and merged back — and apply it to the whole file. Inconsistent fixes create silent misalignments.</div>
+
+<h2>Method 2: Google Sheets</h2>
+<ol>
+<li>Import the CSV into Google Sheets (<em>File → Import</em>).</li>
+<li>Add a helper column with <code>=COUNTA(A2:G2)</code> pointing at your data range, and fill it down. Any row whose count differs from the header row is ragged.</li>
+<li>Use <em>Data → Create a filter</em> and filter the helper column to the wrong counts so you only see the problem rows, then fix them the same way as in Excel: pad short rows, inspect and fold long rows.</li>
+<li>Delete the helper column and re-download as CSV (<em>File → Download → Comma-separated values</em>).</li>
+</ol>
+
+<h2>Method 3: Python (for the technical)</h2>
+<pre>import csv
+
+with open('ragged.csv', newline='', encoding='utf-8') as f:
+    rows = list(csv.reader(f))
+
+width = len(rows[0])  # trust the header
+fixed = [rows[0]]
+for n, row in enumerate(rows[1:], start=2):
+    if len(row) &lt; width:
+        row += [''] * (width - len(row))      # pad short rows
+    elif len(row) &gt; width:
+        print(f"row {n}: too long, check: {row}")
+        row = row[:width]                     # trim after checking
+    fixed.append(row)
+
+with open('fixed.csv', 'w', newline='', encoding='utf-8') as f:
+    csv.writer(f).writerows(fixed)</pre>
+<p>The print in the loop matters: rows that are too <em>long</em> are the dangerous ones, because trimming them can discard real data. Look at each flagged row before trusting the output.</p>
+
+<h2>The one-click way</h2>
+<div class="cta">
+<p>Tired of counting columns by hand? <strong>CSV Cleaner</strong> aligns every row to the header automatically — short rows get padded, extra cells get trimmed, blank rows go away, messy headers get normalized, and encoding problems get fixed — in one click. $9 once, yours forever.</p>
+<a class="btn" href="/products/csv-cleaner/">See CSV Cleaner</a>
+</div>
+
+<p><small>More CSV fixes: <a href="/guides/remove-blank-rows-from-csv.html">remove blank rows</a> · <a href="/guides/fix-csv-headers.html">fix headers with spaces</a> · <a href="/guides/convert-csv-to-utf8.html">convert to UTF-8</a> · <a href="/guides/csv-wont-import.html">CSV won't import?</a> · <a href="/guides/trim-extra-spaces-from-csv.html">trim extra spaces</a> · <a href="/guides/fix-numbers-stored-as-text.html">fix numbers stored as text</a></small></p>
+
+<p><a href="/guides/">← All guides</a></p>
+</main>
+<footer>© 2026 No Fun Intended, LLC · <a href="/">Home</a> · <a href="/products/csv-cleaner/">CSV Cleaner</a></footer>
+</body>
+</html>
