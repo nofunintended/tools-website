@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Remove Blank Rows from a CSV File | No Fun Intended, LLC</title>
+<meta name="description" content="Blank rows breaking your CSV import? Here's how to remove them in Excel, Google Sheets, or automatically — step by step.">
+<style>
+  body { font-family:system-ui,-apple-system,"Segoe UI",sans-serif; margin:0; color:#1a1a1a; line-height:1.7; }
+  .topnav { padding:14px 24px; background:#f9fafb; border-bottom:1px solid #eee; font-size:14px; }
+  .topnav a { color:#4f46e5; text-decoration:none; margin-right:16px; }
+  main { max-width:760px; margin:0 auto; padding:36px 20px 60px; }
+  h1 { font-size:32px; line-height:1.25; margin:0 0 8px; }
+  .meta { color:#6b7280; font-size:14px; margin-bottom:28px; }
+  h2 { font-size:22px; margin:32px 0 12px; }
+  code { background:#f3f4f6; padding:2px 7px; border-radius:5px; font-size:14px; }
+  pre { background:#111827; color:#e5e7eb; padding:16px; border-radius:8px; overflow-x:auto; font-size:14px; }
+  ol li, ul li { margin-bottom:8px; }
+  .cta { background:#eef2ff; border-radius:12px; padding:24px; margin:36px 0; }
+  .cta .btn { display:inline-block; background:#4f46e5; color:#fff; padding:12px 28px; border-radius:8px; text-decoration:none; font-weight:600; margin-top:8px; }
+  footer { background:#f9fafb; padding:24px; text-align:center; font-size:14px; color:#6b7280; }
+  footer a { color:#4f46e5; }
+</style>
+</head>
+<body>
+<div class="topnav"><a href="/">Home</a><a href="/guides/">Guides</a><a href="/products/csv-cleaner/">CSV Cleaner</a></div>
+<main>
+<h1>How to Remove Blank Rows from a CSV File</h1>
+<p class="meta">A practical guide — Excel, Google Sheets, and the automatic way.</p>
+
+<p>Blank rows are the #1 reason CSV imports fail silently. A client sends you a spreadsheet export, you upload it to your invoicing tool or CRM, and rows shift, totals break, or the import just errors out — all because of invisible empty lines scattered through the file.</p>
+
+<p>Here's how to get rid of them, whichever tool you have handy.</p>
+
+<h2>Method 1: Excel</h2>
+<ol>
+  <li>Open the CSV in Excel.</li>
+  <li>Select the entire sheet (<code>Ctrl+A</code>).</li>
+  <li>Go to <strong>Home → Find &amp; Select → Go To Special</strong>.</li>
+  <li>Choose <strong>Blanks</strong> and click OK — every blank cell is now selected.</li>
+  <li>Right-click any selected cell → <strong>Delete → Entire row</strong>.</li>
+  <li>Save the file.</li>
+</ol>
+<p>This works well, but watch out: it deletes any row containing a blank cell in the selection, so use it on a copy if some blanks are legitimate.</p>
+
+<h2>Method 2: Google Sheets</h2>
+<ol>
+  <li>Import the CSV into Google Sheets (<strong>File → Import</strong>).</li>
+  <li>Select all (<code>Ctrl+A</code>), then <strong>Data → Create a filter</strong>.</li>
+  <li>Click the filter icon on any column, uncheck <strong>(Blanks)</strong>, and delete the visible blank rows.</li>
+  <li>Or simpler: sort any column A→Z — blank rows sink to the bottom where you can delete them in one block.</li>
+</ol>
+
+<h2>Method 3: Python (for the technical)</h2>
+<pre>import csv
+
+with open('messy.csv', newline='', encoding='utf-8') as f:
+    rows = [r for r in csv.reader(f) if any(c.strip() for c in r)]
+
+with open('clean.csv', 'w', newline='', encoding='utf-8') as f:
+    csv.writer(f).writerows(rows)</pre>
+<p>This keeps only rows that have at least one non-empty cell.</p>
+
+<h2>The one-click way</h2>
+<div class="cta">
+  <p><strong>Don't want to do this by hand every time?</strong> <a href="/products/csv-cleaner/">CSV Cleaner</a> removes blank rows automatically — along with messy headers and encoding problems — in one click. $9 once, yours forever.</p>
+  <a class="btn" href="/products/csv-cleaner/">See CSV Cleaner</a>
+</div>
+
+<p><small>More CSV fixes: <a href="/guides/fix-csv-headers.html">fix headers with spaces</a> · <a href="/guides/convert-csv-to-utf8.html">convert to UTF-8</a> · <a href="/guides/csv-wont-import.html">CSV won't import?</a> · <a href="/guides/trim-extra-spaces-from-csv.html">trim extra spaces</a> · <a href="/guides/fix-csv-ragged-rows.html">fix ragged rows</a> · <a href="/guides/fix-numbers-stored-as-text.html">fix numbers stored as text</a></small></p>
+</main>
+<footer>© 2026 No Fun Intended, LLC · <a href="/">Home</a> · <a href="/guides/">Guides</a></footer>
+</body>
+</html>
