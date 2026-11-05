@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSV Cleaner - How to Use</title>
+<meta name="description" content="Clean broken CSVs in one click. Guide for freelancers.">
+<style>
+ body { font-family: system-ui, sans-serif; max-width: 700px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+ h1 { font-size: 28px; } h2 { margin-top: 32px; }
+ code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; }
+ .step { background: #f9fafb; border-radius: 8px; padding: 16px; margin: 16px 0; }
+</style>
+</head>
+<body>
+<h1>CSV Cleaner for Freelancers</h1>
+<p><strong>Does one thing:</strong> takes a messy CSV and returns a clean one. No internet needed.</p>
+
+<h2>Use cases</h2>
+<div class="step">
+<h3>1. Client sends a broken CSV</h3>
+<p>Headers like <code>" First Name "</code>, empty rows, weird encoding. Drag it onto CSV Cleaner → get <code>client_cleaned.csv</code> with <code>first_name,last_name,email</code>.</p>
+</div>
+<div class="step">
+<h3>2. Excel export with blank lines</h3>
+<p>Excel often exports blank rows. Cleaner removes them automatically.</p>
+</div>
+<div class="step">
+<h3>3. Bank CSV in latin1</h3>
+<p>Auto-detects encoding, converts to UTF-8 so it imports cleanly elsewhere.</p>
+</div>
+
+<h2>How to use</h2>
+<ol>
+<li>Run <code>csv-cleaner input.csv</code> (or drag file onto the app)</li>
+<li>Check the preview of first 5 rows</li>
+<li>Find <code>input_cleaned.csv</code> next to your original</li>
+</ol>
+
+<h2>Config toggles</h2>
+<ul>
+<li>Header normalization: on/off (default on)</li>
+<li>Remove empty rows: on/off (default on)</li>
+<li>Encoding: auto-detect (default)</li>
+</ul>
+
+<p><small>Questions? Email us — we're happy to help.</small></p>
+</body>
+</html>
