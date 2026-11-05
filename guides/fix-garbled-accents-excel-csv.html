@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why Your CSV Shows Garbage Characters in Excel (and How to Fix It) | No Fun Intended, LLC</title>
+<meta name="description" content="Café becomes CafÃ©, José turns into JosÃ©. The CSV is fine — Excel is reading it in the wrong encoding. Here's how to open it so every accent survives.">
+<style>
+body { font-family:system-ui,-apple-system,"Segoe UI",sans-serif; margin:0; color:#1a1a1a; line-height:1.7; }
+.topnav { padding:14px 24px; background:#f9fafb; border-bottom:1px solid #eee; font-size:14px; }
+.topnav a { color:#4f46e5; text-decoration:none; margin-right:16px; }
+main { max-width:760px; margin:0 auto; padding:36px 20px 60px; }
+h1 { font-size:32px; line-height:1.25; margin:0 0 8px; }
+.meta { color:#6b7280; font-size:14px; margin-bottom:28px; }
+h2 { font-size:22px; margin:32px 0 12px; }
+code { background:#f3f4f6; padding:2px 7px; border-radius:5px; font-size:14px; }
+pre { background:#111827; color:#e5e7eb; padding:16px; border-radius:8px; overflow-x:auto; font-size:14px; }
+ol li, ul li { margin-bottom:8px; }
+.note { background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:14px 18px; margin:20px 0; font-size:15px; }
+.cta { background:#eef2ff; border-radius:12px; padding:24px; margin:36px 0; }
+.cta .btn { display:inline-block; background:#4f46e5; color:#fff; padding:12px 28px; border-radius:8px; text-decoration:none; font-weight:600; margin-top:8px; }
+footer { background:#f9fafb; padding:24px; text-align:center; font-size:14px; color:#6b7280; }
+footer a { color:#4f46e5; }
+</style>
+</head>
+<body>
+<nav class="topnav"><a href="/">Home</a><a href="/guides/">Guides</a><a href="/products/csv-cleaner/">CSV Cleaner</a></nav>
+<main>
+<h1>Why Your CSV Shows Garbage Characters in Excel (and How to Fix It)</h1>
+<p class="meta">A practical guide — Excel, Google Sheets, Notepad++, and the automatic way.</p>
+
+<p><code>Café</code> becomes <code>CafÃ©</code>. <code>José</code> turns into <code>JosÃ©</code>. Curly quotes explode into <code>â€œ</code> soup. Your file is not corrupted — this is an <em>encoding mismatch</em>. The CSV's text is stored as a sequence of bytes, and Excel is reading those bytes with the wrong decoder. On a US Windows machine, Excel's legacy CSV open assumes the file is in <strong>Windows-1252</strong> (the old Windows Latin code page); most modern exports are in <strong>UTF-8</strong>. When a two-byte UTF-8 accent like <code>é</code> gets decoded as if it were two separate Windows-1252 characters, you get the classic <code>Ã©</code> mojibake. The fix is to tell the reader which encoding the file actually is.</p>
+
+<div class="note"><strong>The one rule:</strong> mojibake is a reading problem, not a file problem. Don't re-type the accents — re-open the file with the right encoding and they come back.</div>
+
+<h2>Method 1: Excel import wizard (pick the encoding)</h2>
+<ol>
+<li>In a blank workbook, go to <em>Data → From Text/CSV</em> and select your file.</li>
+<li>In the preview dialog, find <em>File Origin</em>. If the file came from a modern system or web export, choose <strong>65001: Unicode (UTF-8)</strong>. If it came from old Windows software, try <strong>1252: Western European (Windows)</strong>.</li>
+<li>Watch the preview grid: the accents should snap back to normal. If not, try the other option.</li>
+<li>Click <em>Load</em>. Done — nothing was retyped, and the original file is untouched.</li>
+</ol>
+<p>Same rule as with leading zeros: never double-click the CSV. The wizard is the only path that lets you set the encoding before Excel commits to its guess.</p>
+
+<h2>Method 2: Convert the file once, fix it everywhere</h2>
+<p>If you control the file, the durable fix is to save it as UTF-8 so every program reads it right. In <strong>Notepad++</strong>: open the file, then <em>Encoding → Character Sets → Western European → Windows-1252</em> — if the accents now look correct, you found the real encoding; then <em>Encoding → Convert to UTF-8</em> and save. In <strong>VS Code</strong>: click the encoding label in the status bar, choose <em>Reopen with Encoding</em> to try 1252, then <em>Save with Encoding → UTF-8</em>.</p>
+<p>One special note: Excel opens <strong>UTF-8 with a BOM</strong> (byte-order mark) correctly, but a UTF-8 file <em>without</em> a BOM is the one Excel misreads. Adding a BOM fixes Excel specifically — at the cost of a stray invisible character at the start of the file that can confuse other tools. If your CSV travels to more than Excel, prefer clean UTF-8 without BOM and use the import wizard.</p>
+
+<h2>Method 3: Google Sheets</h2>
+<p>Sheets auto-detects encodings and usually gets this right on upload via <em>File → Import</em>. If it doesn't, the fix is upstream: convert the file to UTF-8 with the steps above and re-import.</p>
+
+<h2>Method 4: Python (for the technical)</h2>
+<pre>import csv
+
+# If accents show as garbage, the file isn't UTF-8:
+with open('customers.csv', newline='', encoding='windows-1252') as f:
+    rows = list(csv.reader(f))
+
+# utf-8-sig also strips a leading BOM if one is present:
+with open('export.csv', newline='', encoding='utf-8-sig') as f:
+    rows = list(csv.reader(f))
+
+# Normalize to clean UTF-8 once, the proper way:
+with open('customers.csv', newline='', encoding='windows-1252') as src:
+    rows = list(csv.reader(src))
+with open('customers_utf8.csv', 'w', newline='', encoding='utf-8') as dst:
+    csv.writer(dst).writerows(rows)
+</pre>
+<p>The point is the <code>encoding</code> argument: <code>windows-1252</code> to read legacy exports, <code>utf-8-sig</code> to read BOM files, and plain <code>utf-8</code> to write the fixed file.</p>
+
+<h2>What if only some rows are garbled?</h2>
+<p>That means the file contains <em>mixed</em> encodings — one export glued onto another, or accented rows pasted in from somewhere else. No single encoding setting fixes that; the wrongly-encoded rows have to be converted individually. If the mojibake follows the pattern <code>Ã</code> plus a second garbled character, those rows were UTF-8 bytes read as Windows-1252 and can be repaired mechanically: encode the garbled text back to Windows-1252 bytes, then decode as UTF-8.</p>
+
+<div class="note"><strong>Scope note:</strong> encoding is about how bytes are <em>read</em>, not about cell contents — no cleaner can change which decoder Excel picks when you double-click. What a cleaner <em>can</em> do is make the file itself unambiguous: one consistent encoding (UTF-8), trimmed cells, no ragged rows, and no stray BOM — so whichever way the file gets opened, there's nothing left to misinterpret.</div>
+
+<h2>The one-click way</h2>
+<div class="cta">
+<p>Most mangled CSVs start life as messy exports — mixed encodings, stray spaces, ragged rows — and every tool they pass through makes its own guesses about your data. <strong>CSV Cleaner</strong> converts to clean UTF-8, trims every cell, normalizes headers, and strips blank rows in one click, so the file Excel imports has nothing left to misread. $9 once, yours forever.</p>
+<a class="btn" href="/products/csv-cleaner/">See CSV Cleaner</a>
+</div>
+
+<p><small>More CSV fixes: <a href="/guides/fix-leading-zeros-excel-csv.html">Why Excel Deletes Leading Zeros from CSV Files</a> · <a href="/guides/fix-numbers-stored-as-text.html">How to Fix Numbers Stored as Text in CSV Files</a> · <a href="/products/csv-cleaner/">CSV Cleaner</a></small></p>
+
+<p><a href="/guides/">← All guides</a></p>
+</main>
+<footer>© 2026 No Fun Intended, LLC · <a href="/">Home</a> · <a href="/products/csv-cleaner/">CSV Cleaner</a></footer>
+</body>
+</html>
