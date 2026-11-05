@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why Excel Deletes Leading Zeros from CSV Files (and How to Stop It) | No Fun Intended, LLC</title>
+<meta name="description" content="Product code 00127 opens as 127. A 16-digit order ID becomes 3.48E+15. The CSV is fine — Excel mangles it on open. Here's how to import so every character survives.">
+<style>
+body { font-family:system-ui,-apple-system,"Segoe UI",sans-serif; margin:0; color:#1a1a1a; line-height:1.7; }
+.topnav { padding:14px 24px; background:#f9fafb; border-bottom:1px solid #eee; font-size:14px; }
+.topnav a { color:#4f46e5; text-decoration:none; margin-right:16px; }
+main { max-width:760px; margin:0 auto; padding:36px 20px 60px; }
+h1 { font-size:32px; line-height:1.25; margin:0 0 8px; }
+.meta { color:#6b7280; font-size:14px; margin-bottom:28px; }
+h2 { font-size:22px; margin:32px 0 12px; }
+code { background:#f3f4f6; padding:2px 7px; border-radius:5px; font-size:14px; }
+pre { background:#111827; color:#e5e7eb; padding:16px; border-radius:8px; overflow-x:auto; font-size:14px; }
+ol li, ul li { margin-bottom:8px; }
+.note { background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:14px 18px; margin:20px 0; font-size:15px; }
+.cta { background:#eef2ff; border-radius:12px; padding:24px; margin:36px 0; }
+.cta .btn { display:inline-block; background:#4f46e5; color:#fff; padding:12px 28px; border-radius:8px; text-decoration:none; font-weight:600; margin-top:8px; }
+footer { background:#f9fafb; padding:24px; text-align:center; font-size:14px; color:#6b7280; }
+footer a { color:#4f46e5; }
+</style>
+</head>
+<body>
+<nav class="topnav"><a href="/">Home</a><a href="/guides/">Guides</a><a href="/products/csv-cleaner/">CSV Cleaner</a></nav>
+<main>
+<h1>Why Excel Deletes Leading Zeros from CSV Files (and How to Stop It)</h1>
+<p class="meta">A practical guide — Excel, Google Sheets, Python, and the automatic way.</p>
+
+<p>The file is fine. Open your CSV in a text editor and there they are: <code>00127</code>, <code>045-9982</code>, the full 18-digit order IDs. Double-click it, though, and Excel "helpfully" decides that column is a number: <code>00127</code> becomes <code>127</code>, and anything over 15 digits gets rewritten in scientific notation — <code>348201774521003987</code> turns into <code>3.48202E+17</code>, with the last digits permanently replaced by zeros. The damage isn't in the file. It happens in the half-second between Excel opening the file and drawing the grid, when it <em>guesses</em> each column's data type. The fix is to stop letting Excel guess.</p>
+
+<div class="note"><strong>The one rule:</strong> never double-click a CSV to open it in Excel. Always <em>import</em> it. Double-clicking runs the auto-guess on every column with no chance to intervene.</div>
+
+<h2>Method 1: Excel import wizard (set the column to Text)</h2>
+<ol>
+<li>In a blank workbook, go to <em>Data → From Text/CSV</em> and select your file.</li>
+<li>In the preview dialog, click <em>Transform Data</em> (this opens Power Query instead of loading straight away).</li>
+<li>Select the column with your codes, then go to <em>Transform → Data Type → Text</em>. Repeat for every ID/code column.</li>
+<li><em>Home → Close &amp; Load.</em> Leading zeros intact, long IDs preserved as text.</li>
+</ol>
+<p>Shortcut when you only need one column fixed: in the import preview, click the column header and change its <em>Data Type</em> to Text directly, then <em>Load</em> — same result, fewer clicks.</p>
+
+<h2>Method 2: Pre-format a blank sheet as Text, then paste or open</h2>
+<ol>
+<li>Open a blank workbook. Select the column(s) that will hold codes, right-click, <em>Format Cells → Text → OK</em>.</li>
+<li>With the file's contents on your clipboard (or via <em>Data → From Text/CSV</em> into the pre-formatted sheet), paste into A1.</li>
+</ol>
+<p>Excel respects the existing format for pasted and imported text — the zeros survive. This is the fastest rescue when you've already got the data in another window.</p>
+
+<h2>Method 3: Google Sheets</h2>
+<ol>
+<li><em>File → Import → Upload</em>, pick your CSV.</li>
+<li>In the import dialog, find <em>Convert text to numbers, dates and formulas</em> and set it to <strong>No</strong>.</li>
+<li>Choose your import location and click <em>Import data</em>.</li>
+</ol>
+<p>Sheets then keeps every value exactly as written in the file — zeros, long IDs and all.</p>
+
+<h2>Method 4: Python (for the technical)</h2>
+<pre>import csv
+import pandas as pd
+
+# Read every column as text — nothing gets reinterpreted.
+df = pd.read_csv('orders.csv', dtype=str)
+
+# ... work with df ...
+df.to_csv('orders_fixed.csv', index=False, quoting=csv.QUOTE_MINIMAL)
+
+# Or without pandas: the csv module keeps all values as strings by default.
+with open('orders.csv', newline='', encoding='utf-8') as f:
+    rows = list(csv.reader(f))
+# rows are plain strings here; zeros were never touched.</pre>
+
+<h2>What about damage that's already done?</h2>
+<p>If the only copy you have was saved <em>after</em> Excel mangled it, the zeros are unrecoverable from the file alone — <code>127</code> gives you no way to know whether it was <code>00127</code> or <code>0127</code>. Go back to the original export. If the IDs are fixed-width (always 5 digits, say), you can rebuild them with a formula like <code>=TEXT(A2,"00000")</code> — but only when you're certain of the width.</p>
+
+<div class="note"><strong>Scope note:</strong> leading zeros are destroyed at <em>open</em> time, not stored wrong in the file — so this guide is about the import, and no cleaner can rewrite Excel's auto-guess. What a cleaner <em>can</em> do is make sure the file Excel imports has no other surprises: stray spaces that break the Text-type match, ragged rows that shift IDs into the wrong column, or mixed encodings that turn codes into mojibake. Fix the import with the steps above; fix the file's other messes below.</div>
+
+<h2>The one-click way</h2>
+<div class="cta">
+<p>Most mangled CSVs start life as messy exports — ragged rows, stray spaces, mixed encodings — and every tool they pass through makes its own guesses about your data. <strong>CSV Cleaner</strong> trims every cell, normalizes headers, strips blank rows, and converts to clean UTF-8 in one click, so the file Excel imports has nothing left to misinterpret. $9 once, yours forever.</p>
+<a class="btn" href="/products/csv-cleaner/">See CSV Cleaner</a>
+</div>
+
+<p><small>More CSV fixes: <a href="/guides/fix-garbled-accents-excel-csv.html">Why Your CSV Shows Garbage Characters in Excel</a> · <a href="/guides/fix-numbers-stored-as-text.html">How to Fix Numbers Stored as Text in CSV Files</a> · <a href="/products/csv-cleaner/">CSV Cleaner</a></small></p>
+
+<p><a href="/guides/">← All guides</a></p>
+</main>
+<footer>© 2026 No Fun Intended, LLC · <a href="/">Home</a> · <a href="/products/csv-cleaner/">CSV Cleaner</a></footer>
+</body>
+</html>
