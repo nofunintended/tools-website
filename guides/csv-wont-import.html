@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSV File Won't Import? 6 Common Causes and How to Fix Them | No Fun Intended, LLC</title>
+<meta name="description" content="CSV import failing or producing garbage? Run through these 6 common causes — blank rows, bad headers, encoding, and more — with fixes for each.">
+<style>
+  body { font-family:system-ui,-apple-system,"Segoe UI",sans-serif; margin:0; color:#1a1a1a; line-height:1.7; }
+  .topnav { padding:14px 24px; background:#f9fafb; border-bottom:1px solid #eee; font-size:14px; }
+  .topnav a { color:#4f46e5; text-decoration:none; margin-right:16px; }
+  main { max-width:760px; margin:0 auto; padding:36px 20px 60px; }
+  h1 { font-size:32px; line-height:1.25; margin:0 0 8px; }
+  .meta { color:#6b7280; font-size:14px; margin-bottom:28px; }
+  h2 { font-size:22px; margin:32px 0 12px; }
+  code { background:#f3f4f6; padding:2px 7px; border-radius:5px; font-size:14px; }
+  ol li, ul li { margin-bottom:8px; }
+  .cause { background:#f9fafb; border-radius:10px; padding:18px 20px; margin:16px 0; }
+  .cause h3 { margin:0 0 6px; font-size:17px; }
+  .cause p { margin:6px 0; }
+  .fix { color:#166534; }
+  .cta { background:#eef2ff; border-radius:12px; padding:24px; margin:36px 0; }
+  .cta .btn { display:inline-block; background:#4f46e5; color:#fff; padding:12px 28px; border-radius:8px; text-decoration:none; font-weight:600; margin-top:8px; }
+  footer { background:#f9fafb; padding:24px; text-align:center; font-size:14px; color:#6b7280; }
+  footer a { color:#4f46e5; }
+</style>
+</head>
+<body>
+<div class="topnav"><a href="/">Home</a><a href="/guides/">Guides</a><a href="/products/csv-cleaner/">CSV Cleaner</a></div>
+<main>
+<h1>CSV File Won't Import? 6 Common Causes and How to Fix Them</h1>
+<p class="meta">A troubleshooting checklist for when your CSV import fails, errors out, or produces garbage.</p>
+
+<p>You got a CSV from a client, a vendor, or a spreadsheet export. You try to import it — into your invoicing tool, CRM, email platform, or database — and it fails, or worse, it "succeeds" with scrambled data. Before you retype anything by hand, run through this checklist. One of these six is almost always the culprit.</p>
+
+<div class="cause">
+  <h3>1. Blank rows scattered through the file</h3>
+  <p>Empty lines shift row alignment or cause "unexpected end of data" errors.</p>
+  <p class="fix"><strong>Fix:</strong> delete empty rows — <a href="/guides/remove-blank-rows-from-csv.html">here's how in Excel, Sheets, or Python</a>.</p>
+</div>
+
+<div class="cause">
+  <h3>2. Headers with spaces or special characters</h3>
+  <p><code>" Client Name "</code> or <code>"Invoice Total ($)"</code> — many importers expect simple column names and choke on these.</p>
+  <p class="fix"><strong>Fix:</strong> normalize headers to <code>snake_case</code> — <a href="/guides/fix-csv-headers.html">step-by-step guide</a>.</p>
+</div>
+
+<div class="cause">
+  <h3>3. Wrong text encoding</h3>
+  <p>Accented characters showing as <code>Ã©</code> or <code>â€™</code> means the file isn't UTF-8. Some importers reject the file outright; others import mojibake.</p>
+  <p class="fix"><strong>Fix:</strong> convert to UTF-8 — <a href="/guides/convert-csv-to-utf8.html">four methods</a>.</p>
+</div>
+
+<div class="cause">
+  <h3>4. Inconsistent number of columns</h3>
+  <p>Some rows have 5 values, others have 4 or 6 — often from unquoted commas inside fields (<code>Acme, Inc.</code> without quotes splits into two columns).</p>
+  <p class="fix"><strong>Fix:</strong> open in a spreadsheet, find the ragged rows, and either quote the fields containing commas or remove the stray commas. Re-export carefully.</p>
+</div>
+
+<div class="cause">
+  <h3>5. A BOM (byte order mark) at the start</h3>
+  <p>Some Windows programs save UTF-8 with an invisible 3-byte marker at the start. Your first header then reads as <code>"﻿client_name"</code> — with a hidden character that breaks column matching.</p>
+  <p class="fix"><strong>Fix:</strong> re-save as "UTF-8 without BOM" (Notepad++: <strong>Encoding → Convert to UTF-8 without BOM</strong>), or in Python open with <code>encoding='utf-8-sig'</code>, which strips it.</p>
+</div>
+
+<div class="cause">
+  <h3>6. Wrong delimiter</h3>
+  <p>European exports often use semicolons instead of commas. If everything lands in one column, this is why.</p>
+  <p class="fix"><strong>Fix:</strong> in Excel use <strong>Data → From Text/CSV</strong> and set the delimiter manually; most importers also have a delimiter setting.</p>
+</div>
+
+<h2>Fix them all at once</h2>
+<div class="cta">
+  <p><strong>Causes 1, 2, and 3 cover the vast majority of broken CSVs</strong> — and <a href="/products/csv-cleaner/">CSV Cleaner</a> fixes all three in one click: blank rows removed, headers normalized, encoding converted to UTF-8. $9 once, yours forever.</p>
+  <a class="btn" href="/products/csv-cleaner/">See CSV Cleaner</a>
+</div>
+
+<p><small>More CSV fixes: <a href="/guides/remove-blank-rows-from-csv.html">remove blank rows</a> · <a href="/guides/fix-csv-headers.html">fix headers with spaces</a> · <a href="/guides/convert-csv-to-utf8.html">convert to UTF-8</a> · <a href="/guides/trim-extra-spaces-from-csv.html">trim extra spaces</a> · <a href="/guides/fix-csv-ragged-rows.html">fix ragged rows</a> · <a href="/guides/fix-numbers-stored-as-text.html">fix numbers stored as text</a></small></p>
+</main>
+<footer>© 2026 No Fun Intended, LLC · <a href="/">Home</a> · <a href="/guides/">Guides</a></footer>
+</body>
+</html>
