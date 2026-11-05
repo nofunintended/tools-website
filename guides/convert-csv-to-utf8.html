@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Convert a CSV File to UTF-8 Encoding | No Fun Intended, LLC</title>
+<meta name="description" content="Seeing Ã© instead of é in your CSV? That's an encoding problem. Here's how to convert any CSV to UTF-8 in Excel, Sheets, or automatically.">
+<style>
+  body { font-family:system-ui,-apple-system,"Segoe UI",sans-serif; margin:0; color:#1a1a1a; line-height:1.7; }
+  .topnav { padding:14px 24px; background:#f9fafb; border-bottom:1px solid #eee; font-size:14px; }
+  .topnav a { color:#4f46e5; text-decoration:none; margin-right:16px; }
+  main { max-width:760px; margin:0 auto; padding:36px 20px 60px; }
+  h1 { font-size:32px; line-height:1.25; margin:0 0 8px; }
+  .meta { color:#6b7280; font-size:14px; margin-bottom:28px; }
+  h2 { font-size:22px; margin:32px 0 12px; }
+  code { background:#f3f4f6; padding:2px 7px; border-radius:5px; font-size:14px; }
+  pre { background:#111827; color:#e5e7eb; padding:16px; border-radius:8px; overflow-x:auto; font-size:14px; }
+  ol li, ul li { margin-bottom:8px; }
+  .cta { background:#eef2ff; border-radius:12px; padding:24px; margin:36px 0; }
+  .cta .btn { display:inline-block; background:#4f46e5; color:#fff; padding:12px 28px; border-radius:8px; text-decoration:none; font-weight:600; margin-top:8px; }
+  footer { background:#f9fafb; padding:24px; text-align:center; font-size:14px; color:#6b7280; }
+  footer a { color:#4f46e5; }
+</style>
+</head>
+<body>
+<div class="topnav"><a href="/">Home</a><a href="/guides/">Guides</a><a href="/products/csv-cleaner/">CSV Cleaner</a></div>
+<main>
+<h1>How to Convert a CSV File to UTF-8 Encoding</h1>
+<p class="meta">A practical guide — Excel, Google Sheets, Notepad++, and the automatic way.</p>
+
+<p>If you've ever opened a CSV and seen <code>ZoÃ©</code> instead of <code>Zoé</code>, or <code>cafÃ©</code> instead of <code>café</code>, you've hit an encoding problem. The file was saved in one encoding (often Windows-1252) and opened as another (usually UTF-8). Accented characters, curly quotes, and symbols turn into gibberish — and imports choke on them.</p>
+
+<p>UTF-8 is the safe universal choice. Here's how to get your file there.</p>
+
+<h2>Method 1: Excel</h2>
+<ol>
+  <li>Open the CSV in Excel.</li>
+  <li><strong>File → Save As</strong>, and choose <strong>CSV UTF-8 (Comma delimited)</strong> from the file type dropdown.</li>
+  <li>Save. Done — the new file is UTF-8.</li>
+</ol>
+<p>Note: plain "CSV (Comma delimited)" does <em>not</em> guarantee UTF-8. You must pick the UTF-8 variant explicitly.</p>
+
+<h2>Method 2: Google Sheets</h2>
+<ol>
+  <li>Import the CSV (<strong>File → Import</strong>). If characters look wrong on import, try the <strong>ISO-8859-1</strong> option in the import dialog, then continue.</li>
+  <li><strong>File → Download → Comma-separated values (.csv)</strong>.</li>
+</ol>
+<p>Google Sheets always exports UTF-8, so a round-trip through Sheets fixes encoding automatically.</p>
+
+<h2>Method 3: Notepad++ (Windows)</h2>
+<ol>
+  <li>Open the CSV in Notepad++.</li>
+  <li>Go to <strong>Encoding → Convert to UTF-8</strong> (not "Encode in UTF-8" — <em>Convert</em> re-saves the bytes correctly).</li>
+  <li>Save the file.</li>
+</ol>
+
+<h2>Method 4: Python</h2>
+<pre># Read with the original encoding, write as UTF-8
+with open('messy.csv', encoding='cp1252') as f:
+    content = f.read()
+
+with open('clean.csv', 'w', encoding='utf-8') as f:
+    f.write(content)</pre>
+<p>If you're not sure of the original encoding, try <code>cp1252</code> first (most common for Windows-generated files), then <code>latin1</code>.</p>
+
+<h2>The one-click way</h2>
+<div class="cta">
+  <p><strong>Don't want to detective-work every file's encoding?</strong> <a href="/products/csv-cleaner/">CSV Cleaner</a> auto-detects the encoding and converts to clean UTF-8 — along with header and blank-row fixes. $9 once, yours forever.</p>
+  <a class="btn" href="/products/csv-cleaner/">See CSV Cleaner</a>
+</div>
+
+<p><small>More CSV fixes: <a href="/guides/remove-blank-rows-from-csv.html">remove blank rows</a> · <a href="/guides/fix-csv-headers.html">fix headers with spaces</a> · <a href="/guides/csv-wont-import.html">CSV won't import?</a> · <a href="/guides/trim-extra-spaces-from-csv.html">trim extra spaces</a> · <a href="/guides/fix-csv-ragged-rows.html">fix ragged rows</a> · <a href="/guides/fix-numbers-stored-as-text.html">fix numbers stored as text</a></small></p>
+</main>
+<footer>© 2026 No Fun Intended, LLC · <a href="/">Home</a> · <a href="/guides/">Guides</a></footer>
+</body>
+</html>
